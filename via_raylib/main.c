@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <stdlib.h>
 
 int main(void)
 {
@@ -7,8 +8,13 @@ int main(void)
     while (!WindowShouldClose())
     {
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("Hello world!", 190, 200, 20, LIGHTGRAY);
+        
+        for (size_t x = 0; x < GetRenderWidth(); x++) {
+            for (size_t y = 0; y < GetRenderWidth(); y++) {
+                DrawPixel(x, y, rand() < 0.5 * RAND_MAX ? BLACK : WHITE);
+            }
+        }
+
         EndDrawing();
     }
 
