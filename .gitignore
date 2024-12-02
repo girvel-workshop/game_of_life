@@ -1,2 +1,5 @@
-# Basic GCC output:
+# cmake
+**/build
+
+# GCC
 **/a.out
