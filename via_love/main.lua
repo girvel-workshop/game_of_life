@@ -1,3 +1,8 @@
+love.quit = function()
+  return false
+end
+
+
 -- constants --
 local W, H = love.graphics.getDimensions()
 local PRESENTATION_FPS = 100
@@ -34,10 +39,15 @@ end
 
 
 love.draw = function()
+  love.graphics.setCanvas(canvases.to_draw)
+  love.graphics.setShader(GAME_OF_LIFE_SHADER)
+
   love.graphics.draw(canvases.previous)
-end
 
+  love.graphics.setShader()
+  love.graphics.setCanvas()
 
-love.quit = function()
-  return false
+  love.graphics.draw(canvases.to_draw)
+
+  canvases.to_draw, canvases.previous = canvases.previous, canvases.to_draw
 end
