@@ -1,6 +1,6 @@
 -- constants --
 local W, H = love.graphics.getDimensions()
--- local PRESENTATION_FPS = 100
+local PRESENTATION_FPS = 100
 local COLORS = {
   NO_CELL = {0, 0, 0},
   CELL = {1, 1, 1},
@@ -11,8 +11,8 @@ local INITIAL_DENSITY = 0.3
 
 
 -- main loop --
--- local last_draw_time = 0
-local frame_time = -1
+local last_present_time = 0
+local frame_times = {}
 
 love.run = function()
   love.load()
@@ -29,14 +29,14 @@ love.run = function()
       end
     end
 
-    -- local now = love.timer.getTime()
-    -- if now - last_draw_time < PRESENTATION_FPS then
-    --   last_draw_time = now
+    local now = love.timer.getTime()
+    if now - last_present_time > (1 / PRESENTATION_FPS) then
+      last_present_time = now
       love.draw()
       love.graphics.present()
-    -- end
+    end
 
-    frame_time = love.timer.getTime() - start_time
+    table.insert(frame_times, love.timer.getTime() - start_time)
   end
 end
 
@@ -70,8 +70,8 @@ end
 
 
 -- run --
+local present_frames_counter = 100
 local displayed_frame_time
-local frames_counter = 100
 love.draw = function()
   -- game of life itself --
   love.graphics.setCanvas(canvases.to_draw)
@@ -87,11 +87,16 @@ love.draw = function()
   canvases.to_draw, canvases.previous = canvases.previous, canvases.to_draw
 
   -- stats --
-  if frames_counter >= 100 then
-    displayed_frame_time = frame_time
-    frames_counter = 0
+  if present_frames_counter >= 100 then
+    local sum = 0
+    for _, v in ipairs(frame_times) do
+      sum = sum + v
+    end
+    displayed_frame_time = sum / #frame_times
+    present_frames_counter = 0
+    frame_times = {}
   end
-  frames_counter = frames_counter + 1
+  present_frames_counter = present_frames_counter + 1
 
   love.graphics.setColor(COLORS.BLACK)
   love.graphics.rectangle("fill", 0, 0, 50, 50)
