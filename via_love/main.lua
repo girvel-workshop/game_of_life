@@ -10,6 +10,7 @@ local COLORS = {
   BLACK = {0, 0, 0},
   WHITE = {1, 1, 1},
 }
+local INITIAL_DENSITY = 0.3
 local GAME_OF_LIFE_SHADER = love.graphics.newShader("shader.glsl")
 
 
@@ -26,7 +27,7 @@ love.load = function()
 
   for x = 1, W do
     for y = 1, H do
-      local color = math.random() < 0.5 and COLORS.WHITE or COLORS.BLACK
+      local color = math.random() < INITIAL_DENSITY and COLORS.WHITE or COLORS.BLACK
       love.graphics.setColor(color)
       love.graphics.points(x, y)
     end

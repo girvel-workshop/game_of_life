@@ -6,9 +6,8 @@ vec4 CELL = vec4(1.);
 vec4 NO_CELL = vec4(0., 0., 0., 1.);
 
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
-    // TODO %
     // TODO does neighbours_n being float affect performance?
-    float neighbours_n = 
+    float neighbours_n =
         Texel(tex, mod(texture_coords + right, 1.)).x +
         Texel(tex, mod(texture_coords - right, 1.)).x +
         Texel(tex, mod(texture_coords + down, 1.)).x +
