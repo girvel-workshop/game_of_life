@@ -1,27 +1,50 @@
-love.quit = function()
-  return false
-end
-
-
 -- constants --
 local W, H = love.graphics.getDimensions()
-local PRESENTATION_FPS = 100
+-- local PRESENTATION_FPS = 100
 local COLORS = {
   BLACK = {0, 0, 0},
   WHITE = {1, 1, 1},
 }
 local INITIAL_DENSITY = 0.3
-local GAME_OF_LIFE_SHADER = love.graphics.newShader("shader.glsl")
+
+
+-- main loop --
+-- local last_draw_time = 0
+
+love.run = function()
+  love.load()
+
+  return function()
+    love.event.pump()
+    for name, a in love.event.poll() do
+      if name == "quit" then
+        love.quit()
+        return a or 0
+      end
+    end
+
+    -- love.timer.step()
+    -- love.update()
+
+    -- local now = love.timer.getTime()
+    -- if now - last_draw_time < PRESENTATION_FPS then
+    --   last_draw_time = now
+      love.draw()
+      love.graphics.present()
+    -- end
+  end
+end
 
 
 -- set up state --
-local canvases = {
-  previous = love.graphics.newCanvas(W, H),
-  to_draw = love.graphics.newCanvas(W, H),
-}
-
+local canvases, game_of_life_shader
 
 love.load = function()
+  canvases = {
+    previous = love.graphics.newCanvas(W, H),
+    to_draw = love.graphics.newCanvas(W, H),
+  }
+
   print("Rendering base canvas")
   love.graphics.setCanvas(canvases.previous)
 
@@ -36,12 +59,15 @@ love.load = function()
   love.graphics.setColor(COLORS.WHITE)
   love.graphics.setCanvas()
   print("Finished.")
+
+  game_of_life_shader = love.graphics.newShader("game_of_life.glsl")
 end
 
 
+-- calculate & draw stuff --
 love.draw = function()
   love.graphics.setCanvas(canvases.to_draw)
-  love.graphics.setShader(GAME_OF_LIFE_SHADER)
+  love.graphics.setShader(game_of_life_shader)
 
   love.graphics.draw(canvases.previous)
 
@@ -51,4 +77,9 @@ love.draw = function()
   love.graphics.draw(canvases.to_draw)
 
   canvases.to_draw, canvases.previous = canvases.previous, canvases.to_draw
+end
+
+
+love.quit = function()
+  print("Quit.")
 end
